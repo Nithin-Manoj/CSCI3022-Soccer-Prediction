@@ -120,6 +120,31 @@ def perform_hypothesis_testing(df):
     print(ols_model.summary().tables[1])
     print(f"Overall Model R-squared: {ols_model.rsquared:.4f}, F-statistic p-value: {ols_model.f_pvalue:.4e}")
 
+    # Generate Figure: Hypothesis Testing Barplot (Mean Home Goal Advantage by Venue Type)
+    plt.figure(figsize=(8, 6))
+    ax = sns.barplot(
+        x='neutral',
+        y='goal_difference',
+        data=df,
+        palette=['#2b5c8f', '#d95f02'],
+        hue='neutral',
+        legend=False,
+        errorbar=('ci', 95),
+        capsize=0.1
+    )
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['True Home Fixture', 'Neutral Venue'], fontsize=11)
+    ax.set_xlabel('Venue Type', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Mean Goal Differential', fontsize=12, fontweight='bold')
+    ax.axhline(0, color='black', linestyle='--', linewidth=1.2, label='Baseline (y=0)')
+    ax.set_title('Mean Home Goal Advantage by Venue Type (with 95% CIs)', fontsize=14, fontweight='bold', pad=15)
+    
+    plt.tight_layout()
+    fig_path_jpeg = os.path.join(REPORTS_DIR, 'hypothesis_testing.jpeg')
+    plt.savefig(fig_path_jpeg, dpi=300)
+    plt.close()
+    print(f"\nSaved hypothesis testing plot to {fig_path_jpeg}")
+
 def main():
     data_path = os.path.join(PROCESSED_DATA_DIR, 'clean_soccer_data.csv')
     df = pd.read_csv(data_path)
